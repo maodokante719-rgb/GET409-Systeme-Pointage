@@ -144,7 +144,7 @@ Détail : [docs/backlog-s3.md](./docs/backlog-s3.md)
 
 - [x] Value Proposition Canvas (6 blocs) — [docs/vpc.md](./docs/vpc.md) · PDF dans [livrables/](./livrables/GET409-Systeme-Pointage_VPC_S2.pdf)
 - [x] HMW définitif — [docs/hmw-definitif.md](./docs/hmw-definitif.md) (repris en tête de ce README)
-- [x] Journal de Prompts — 5 prompts P1 → P5 notés /5 — [journal-prompts.md](./journal-prompts.md)
+- [x] Journal de Prompts — 5 prompts P1 → P5 notés /5, avec une itération documentée (P1 v2) — [journal-prompts.md](./journal-prompts.md)
 - [x] 6 Chapeaux de Bono — [docs/chapeaux-bono.md](./docs/chapeaux-bono.md)
 - [x] Contraintes MVP — [docs/contraintes-mvp.md](./docs/contraintes-mvp.md)
 - [x] Hypothèses de validation — [docs/hypotheses-validation.md](./docs/hypotheses-validation.md)
@@ -154,7 +154,8 @@ Détail : [docs/backlog-s3.md](./docs/backlog-s3.md)
 - [x] Pitch proposition de valeur (draft) — [docs/pitch-vpc-draft.md](./docs/pitch-vpc-draft.md)
 - [x] Alignement HMW / backlog — [docs/hmw-alignement.md](./docs/hmw-alignement.md)
 - [x] Préparation jury — [docs/hmw-jury.md](./docs/hmw-jury.md)
-- [ ] Script démo S6 (docs/hmw-demo.md) — après la construction du MVP
+- [x] Script démo S6 — [docs/hmw-demo.md](./docs/hmw-demo.md) (version S2 ; métriques réelles ajoutées en S6)
+- [x] Pitch HMW 2 minutes — script [docs/pitch-hmw.md](./docs/pitch-hmw.md) · slide [PDF](./livrables/GET409-Systeme-Pointage_Pitch_HMW_S2.pdf) / [image](./livrables/GET409-Systeme-Pointage_Pitch_HMW_S2.png)
 
 ## Workflow Git
 
@@ -163,7 +164,7 @@ Chaque livrable est préparé sur sa propre branche, puis fusionné dans `main` 
 | Livrable | Branche | Contenu |
 |---|---|---|
 | Livrable 1 (S1) | `feature/livrable1` | Fiche d'équipe, carte d'empathie, HMW draft, guide d'interview |
-| Livrable 2 (S2) | `feature/livrable2` | 6 Chapeaux, VPC, HMW définitif, contraintes, hypothèses, métriques, backlog S3, journal de prompts |
+| Livrable 2 (S2) | `feature/livrable2` | 6 Chapeaux, VPC, HMW définitif, contraintes, hypothèses, métriques, backlog S3, script démo, pitch HMW, journal de prompts |
 | Livrable 3 (S3) | `feature/livrable3` | à venir |
 
 Convention :
@@ -195,8 +196,10 @@ GET409-Systeme-Pointage/
 │   ├── pitch-vpc-draft.md      ← S2 · bloc pitch soutenance
 │   ├── hmw-definitif.md        ← S2 · HMW définitif
 │   ├── hmw-alignement.md       ← S2 · filtre sprint S3
+│   ├── hmw-demo.md             ← S2 · script démo S6
+│   ├── pitch-hmw.md            ← S2 · pitch HMW 2 minutes
 │   └── hmw-jury.md             ← S2 · préparation soutenance
-└── livrables/              ← PDF (fiche d'équipe, carte d'empathie, VPC)
+└── livrables/              ← PDF (fiche d'équipe, carte d'empathie, VPC, slide du pitch HMW)
 ```
 
 ## Prochaines étapes
