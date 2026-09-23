@@ -131,3 +131,164 @@ Génère la Carte d'Empathie complète.
 1. Un prompt contextualisé (lieu, utilisateur, contraintes locales) donne des réponses bien plus exploitables qu'un prompt vague.
 2. Il faut toujours relire : l'IA peut avancer des chiffres non vérifiés ou glisser une solution dans un HMW.
 3. Le format Markdown strict (S4) produit un livrable directement déposable sur GitHub.
+
+---
+
+# Séance 2 — Journal de Prompts (5 prompts métier)
+
+> Format imposé par le cours (S2, diapo 14) : technique, prompt exact, résumé de la réponse, note /5 avec justification, itération.
+> Outil : Claude. Tenu par le Master Prompt Engineer (Oluwadara Emmanuel Ebeh).
+> Les réponses ont été générées avec Claude pendant la préparation des livrables S2 ; les notes /5 sont l'évaluation de l'équipe. Si un prompt obtient moins de 3/5 en le rejouant en séance, documenter la reformulation dans la colonne Itération.
+
+| # | Technique | Objectif | Note |
+|---|---|---|---|
+| P1 | Zero-Shot | 3 principaux problèmes du persona | 4/5 |
+| P2 | Zero-Shot | 5 idées de fonctionnalités pour le MVP | 4/5 |
+| P3 | Few-Shot | Compléter un 3e couple Défi → Solution | 4/5 |
+| P4 | Chain-of-Thought | Cause → obstacle → solution | 5/5 |
+| P5 | Libre | Affiner le HMW définitif (P-HMW) | 5/5 |
+
+## P1 — Zero-Shot
+
+**Prompt envoyé :**
+
+```text
+Tu es consultant en gestion des ressources humaines pour les PME au Sénégal.
+Identifie les 3 principaux problèmes de Ndèye Fatou Sarr, responsable RH d'une
+PME de services à Dakar (3 sites + techniciens en intervention chez les clients,
+environ 70 employés), dans la gestion des présences de ses employés, et propose
+une piste de solution numérique pour chacun.
+Réponds sous forme de liste numérotée, en français.
+```
+
+**Réponse IA (résumé) :** (1) émargement papier non fiable et signatures pour un collègue ; (2) consolidation manuelle de la paie sur plusieurs jours ; (3) présence des techniciens terrain invérifiable. Pistes : pointage mobile, calcul automatique, pointage lié à la mission.
+**Note : 4/5** — pertinent et ancré dans le persona ; les pistes restent générales et doivent être confrontées à de vraies RH (hypothèse C1).
+**Itération :** non nécessaire (≥ 3/5). À la relecture, l'équipe a précisé que la vérification du lieu se fait uniquement au moment du pointage (contraintes-mvp.md, C2).
+
+## P2 — Zero-Shot
+
+**Prompt envoyé :**
+
+```text
+Tu es product manager spécialisé dans les MVP pour les PME d'Afrique de l'Ouest.
+Notre persona : Ndèye Fatou Sarr, responsable RH d'une PME de services à Dakar,
+3 sites + techniciens chez les clients, employés équipés de smartphones,
+coupures d'électricité fréquentes.
+Notre HMW : "Comment pourrions-nous permettre à la responsable RH d'une PME dakaroise multi-sites d'obtenir chaque jour, sans ressaisie, une preuve de présence fiable et acceptée par chaque employé — au bureau comme en mission — afin de clôturer les éléments de paie en moins d'une journée et sans contestation ?"
+Propose 5 idées de fonctionnalités pour notre MVP. Pour chacune : 1 phrase de
+description et le problème du persona qu'elle résout.
+Réponds sous forme de tableau, en français.
+```
+
+**Réponse IA (résumé) :** pointage mobile vérifié par zone, code QR de site, tableau de bord du jour, récapitulatif mensuel exportable, historique employé avec demande de correction.
+**Note : 4/5** — idées directement reliées aux douleurs du persona ; il manquait l'alternative pour les employés sans smartphone.
+**Itération :** non nécessaire (≥ 3/5) ; l'alternative pour les employés sans smartphone a été ajoutée par l'équipe dans les contraintes (C5) et les hypothèses (C2). Les 5 idées ont alimenté le Chapeau Vert et le backlog S3.
+
+## P3 — Few-Shot
+
+**Prompt envoyé :**
+
+```text
+Tu es ingénieur produit spécialisé dans les outils RH pour les PME d'Afrique de l'Ouest.
+Voici des exemples de défis et leurs solutions :
+
+DÉFI : Les employés signent la feuille d'émargement pour un collègue absent.
+SOLUTION : Pointage personnel depuis le téléphone, avec vérification du lieu au
+moment du pointage.
+
+DÉFI : La RH passe 3 à 4 jours par mois à ressaisir les présences dans Excel.
+SOLUTION : Calcul automatique du récapitulatif mensuel à partir des pointages,
+export prêt pour la paie.
+
+DÉFI : Les techniciens en intervention chez un client ne peuvent pas prouver
+leur présence et contestent les journées retenues.
+SOLUTION :
+```
+
+**Réponse IA (résumé) :** « Pointage "mission" à l'arrivée chez le client, rattaché à l'ordre d'intervention et validé par le chef d'équipe, sans suivi de position en continu. »
+**Note : 4/5** — le format Défi → Solution est parfaitement imité et la solution respecte la contrainte anti-surveillance ; la validation par le chef d'équipe reste à tester sur le terrain.
+**Itération :** non nécessaire. Réponse reprise dans le VPC (Pain Reliever « pointage mission ») et le backlog (US-05).
+
+## P4 — Chain-of-Thought
+
+**Prompt envoyé :**
+
+```text
+Tu es un expert en gestion des ressources humaines en Afrique de l'Ouest.
+Analyse le problème suivant : dans les PME multi-sites de Dakar, les présences
+des employés sont relevées sur papier et par WhatsApp, ce qui rend la paie
+lente, contestable et source de conflits.
+Réfléchis étape par étape :
+Étape 1 : Identifie la cause principale du problème dans le contexte de Dakar.
+Étape 2 : Décris l'obstacle principal qui empêche une solution classique
+(pointeuse biométrique, logiciel RH de grand groupe) de fonctionner.
+Étape 3 : Propose une solution technologique accessible à la responsable RH
+d'une PME.
+Développe chaque étape avant de conclure.
+```
+
+**Réponse IA (résumé) :** Étape 1 — aucune preuve de présence individuelle et vérifiable, surtout hors du siège. Étape 2 — les pointeuses sont fixes, coûteuses, dépendantes de l'électricité et inutiles pour le terrain ; les logiciels RH sont trop lourds pour une PME. Étape 3 — pointage sur les téléphones existants, vérifié au moment du pointage, avec récapitulatif mensuel automatique.
+**Note : 5/5** — raisonnement structuré, vérifiable à chaque étape, sans chiffre inventé ; il a directement nourri les contraintes C1 et C5.
+**Itération :** non nécessaire.
+
+## P5 — Libre (P-HMW : HMW définitif)
+
+**Prompt envoyé :**
+
+```text
+Tu es un expert en Design Thinking et en formulation de problématiques pour des
+projets d'innovation sociale en Afrique de l'Ouest.
+Voici notre travail de S2 :
+Notre HMW draft S1 :
+"Comment pourrions-nous aider la responsable RH d'une entreprise dakaroise
+multi-sites à disposer de présences fiables et vérifiables de tous ses employés,
+au bureau comme sur le terrain, afin de préparer la paie sans ressaisie ni
+litiges en fin de mois ?"
+Insights clés des 6 Chapeaux de Bono :
+- Chapeau Blanc : la consolidation des présences prend 3 à 4 jours par mois.
+- Chapeau Noir : fraude au pointage et rejet d'un outil perçu comme de la surveillance.
+- Chapeau Bleu : comment prouver la présence d'un technicien chez un client sans
+  suivre sa position en continu ?
+FIT Check du VPC :
+- Pain principal couvert : pointage pour un collègue → pointage personnel vérifié
+- Pain secondaire couvert : terrain invérifiable → pointage « mission » validé
+Notre persona : Ndèye Fatou Sarr · 39 ans · responsable RH · PME de services,
+Dakar Plateau · smartphone Android
+À partir de ces éléments, propose 3 versions améliorées de notre HMW définitif.
+Pour chaque version, indique :
+- En quoi elle est plus précise que le draft S1
+- Quel risque du Chapeau Noir elle intègre
+- Si elle est trop précise / trop large / bien calibrée
+Puis recommande la version la plus solide pour guider notre prototypage en S3.
+FORMAT DE SORTIE STRICT — Markdown pur, sans introduction, sans conclusion.
+```
+
+**Réponse IA (résumé) :** 3 versions — A (bien calibrée), B (trop précise, limitée aux techniciens), C (trop large). Version recommandée : A.
+**Note : 5/5** — les 3 versions sont nettement différentes, l'évaluation est justifiée, et la version A passe les 3 questions de validation du cours.
+**Itération :** non nécessaire. Résultat commité dans [docs/hmw-definitif.md](./docs/hmw-definitif.md).
+
+---
+
+## Prompts de la séquence S2 du cours (notés /5)
+
+| Prompt du cours | Fichier produit | Note | Commentaire |
+|---|---|---|---|
+| P-CHAPEAUX (étape 01) | [docs/chapeaux-bono.md](./docs/chapeaux-bono.md) | 4/5 | 3 insights par chapeau ; insights sans verbatim retirés à la relecture |
+| P-CHAPEAUX-CONTRAINTES (étape 02) | [docs/contraintes-mvp.md](./docs/contraintes-mvp.md) | 5/5 | 5 contraintes formulées en critères DOIT / NE DOIT PAS |
+| P-CHAPEAUX-HYPOTHESES (étape 03) | [docs/hypotheses-validation.md](./docs/hypotheses-validation.md) | 4/5 | Hypothèses classées par criticité ; délais S3 à confirmer par l'équipe |
+| P-CHAPEAUX-METRIQUES (étape 04) | [docs/metriques-succes.md](./docs/metriques-succes.md) | 4/5 | Métrique Nord mesurable sans technologie ; cibles à ajuster après C1 |
+| P-VPC-1 + P-VPC-2 (étape 05) | [docs/vpc.md](./docs/vpc.md) | 5/5 | Chaque Pain a son Pain Reliever — FIT validé |
+| P-VPC-CONNECTIONS (étape 06) | [docs/vpc-connections.md](./docs/vpc-connections.md) | 4/5 | 2 éléments non tracés (≤ 2, conforme) |
+| P-VPC-BACKLOG (étape 07) | [docs/backlog-s3.md](./docs/backlog-s3.md) | 5/5 | 3 US MUST (entre 2 et 4, conforme) |
+| P-VPC-PITCH | [docs/pitch-vpc-draft.md](./docs/pitch-vpc-draft.md) | 4/5 | Chiffres présentés comme objectifs, pas comme résultats |
+| P-HMW-ALIGNEMENT | [docs/hmw-alignement.md](./docs/hmw-alignement.md) | 5/5 | Ordre de construction S3 : US-01, US-03, US-02 |
+| P-HMW-JURY | [docs/hmw-jury.md](./docs/hmw-jury.md) | 4/5 | 5 questions + 2 pièges, réponses traçables dans le dépôt |
+
+> P-HMW-DEMO (script de démo S6) sera produit après la construction du MVP (S3-S5) : il nécessite des résultats réels.
+
+## Leçons retenues (S2)
+
+1. **Zero-Shot** : la formule Rôle + Contexte + Tâche + Format du cours suffit à obtenir une réponse exploitable (P1, P2 : 4/5) ; sans elle, la réponse reste générique.
+2. **Few-Shot** : deux exemples suffisent pour imposer le format et le ton de la réponse (P3).
+3. **Chain-of-Thought** : le raisonnement étape par étape donne une analyse vérifiable, sans chiffre inventé (P4).
+4. Relire chaque sortie avec la question « est-ce qu'on l'a entendu en interview ? » évite d'intégrer des idées hors sujet.
