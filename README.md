@@ -1,7 +1,7 @@
 # GET409 — Systeme-Pointage
 
 > Plateforme de gestion du pointage (présences, retards, heures supplémentaires) pour les entreprises au Sénégal.
-> Module GET 409 — Atelier IA · Swiss UMEF University, Campus de Dakar · 2025-2026 · Séance 1 (Empathize → Define)
+> Module GET 409 — Atelier IA · Swiss UMEF University, Campus de Dakar · 2025-2026 · Séances 1-2 (Empathize → Define → Ideate)
 
 ## Notre équipe
 
@@ -17,11 +17,39 @@
 - **Utilisateur cible :** la responsable RH d'une entreprise multi-sites (personnel de bureau + équipes terrain en mission chez les clients)
 - **Problème en 1 phrase :** les présences sont relevées sur des feuilles d'émargement papier, par WhatsApp et dans Excel, ce qui rend la préparation de la paie lente, contestable et source de conflits.
 
-### Énoncé HMW retenu (fil directeur du projet)
+### ✅ HMW définitif (S2)
 
-> **Comment pourrions-nous aider la responsable RH d'une entreprise dakaroise multi-sites à disposer de présences fiables et vérifiables de tous ses employés, au bureau comme sur le terrain, afin de préparer la paie sans ressaisie ni litiges en fin de mois ?**
+> **Comment pourrions-nous permettre à la responsable RH d'une PME dakaroise multi-sites d'obtenir chaque jour, sans ressaisie, une preuve de présence fiable et acceptée par chaque employé — au bureau comme en mission — afin de clôturer les éléments de paie en moins d'une journée et sans contestation ?**
 
-Les 5 formulations étudiées et la justification du choix : [hmw.md](./hmw.md)
+Détail et justification : [docs/hmw-definitif.md](./docs/hmw-definitif.md) · Alignement avec le sprint S3 : [docs/hmw-alignement.md](./docs/hmw-alignement.md)
+
+<details>
+<summary>HMW draft S1</summary>
+
+> Comment pourrions-nous aider la responsable RH d'une entreprise dakaroise multi-sites à disposer de présences fiables et vérifiables de tous ses employés, au bureau comme sur le terrain, afin de préparer la paie sans ressaisie ni litiges en fin de mois ?
+
+Les 5 formulations étudiées en S1 : [hmw.md](./hmw.md)
+</details>
+
+## Séance 2 — Idéation, VPC et HMW définitif
+
+### Value Proposition Canvas (résumé)
+
+| 👤 Profil client — Ndèye Fatou (RH de PME multi-sites) | 💡 Proposition de valeur — Systeme-Pointage |
+|---|---|
+| **Jobs :** savoir chaque jour qui est présent (3 sites + terrain) ; consolider les présences pour la paie ; compter juste les heures sup ; répondre aux contestations avec des preuves | **Produits & services :** pointage depuis le téléphone vérifié au moment du pointage ; code QR de site ; tableau de bord RH du jour ; récapitulatif mensuel + historique employé |
+| **Pains :** épuisement et peur de l'erreur de paie ; pointage pour un collègue ; terrain invérifiable ; peur de la surveillance | **Pain relievers :** récapitulatif automatique ; pointage personnel vérifié ; pointage « mission » validé ; vérification ponctuelle + charte d'usage |
+| **Gains :** paie en moins d'une journée ; source de vérité partagée ; aucun matériel à acheter ; temps RH libéré | **Gain creators :** export prêt pour la paie ; historique partagé + correction tracée ; smartphones existants ; tableau de bord du jour |
+
+**FIT :** chaque Pain a son Pain Reliever — FIT validé ([docs/vpc.md](./docs/vpc.md)) · PDF : [livrables/GET409-Systeme-Pointage_VPC_S2.pdf](./livrables/GET409-Systeme-Pointage_VPC_S2.pdf)
+
+### Backlog S3 (user stories MUST)
+
+1. **US-01** — Pointage arrivée/départ vérifié depuis le téléphone
+2. **US-03** — Récapitulatif mensuel + export pour la paie
+3. **US-02** — Tableau de bord RH du jour
+
+Détail : [docs/backlog-s3.md](./docs/backlog-s3.md)
 
 ## Carte d'empathie (livrable obligatoire S1)
 
@@ -112,22 +140,66 @@ Les 5 formulations étudiées et la justification du choix : [hmw.md](./hmw.md)
 - [x] Guide d'interview + notes d'interview (Prompt S2) — [docs/guide-interview.md](./docs/guide-interview.md)
 - [x] Journal de prompts (S1 → S4) — [journal-prompts.md](./journal-prompts.md)
 
+## Livrables S2
+
+- [x] Value Proposition Canvas (6 blocs) — [docs/vpc.md](./docs/vpc.md) · PDF dans [livrables/](./livrables/GET409-Systeme-Pointage_VPC_S2.pdf)
+- [x] HMW définitif — [docs/hmw-definitif.md](./docs/hmw-definitif.md) (repris en tête de ce README)
+- [x] Journal de Prompts — 5 prompts P1 → P5 notés /5 — [journal-prompts.md](./journal-prompts.md)
+- [x] 6 Chapeaux de Bono — [docs/chapeaux-bono.md](./docs/chapeaux-bono.md)
+- [x] Contraintes MVP — [docs/contraintes-mvp.md](./docs/contraintes-mvp.md)
+- [x] Hypothèses de validation — [docs/hypotheses-validation.md](./docs/hypotheses-validation.md)
+- [x] Métriques de succès — [docs/metriques-succes.md](./docs/metriques-succes.md)
+- [x] Traçabilité 6 Chapeaux → VPC — [docs/vpc-connections.md](./docs/vpc-connections.md)
+- [x] Backlog S3 — [docs/backlog-s3.md](./docs/backlog-s3.md)
+- [x] Pitch proposition de valeur (draft) — [docs/pitch-vpc-draft.md](./docs/pitch-vpc-draft.md)
+- [x] Alignement HMW / backlog — [docs/hmw-alignement.md](./docs/hmw-alignement.md)
+- [x] Préparation jury — [docs/hmw-jury.md](./docs/hmw-jury.md)
+- [ ] Script démo S6 (docs/hmw-demo.md) — après la construction du MVP
+
+## Workflow Git
+
+Chaque livrable est préparé sur sa propre branche, puis fusionné dans `main` par une Pull Request relue par un membre de l'équipe.
+
+| Livrable | Branche | Contenu |
+|---|---|---|
+| Livrable 1 (S1) | `feature/livrable1` | Fiche d'équipe, carte d'empathie, HMW draft, guide d'interview |
+| Livrable 2 (S2) | `feature/livrable2` | 6 Chapeaux, VPC, HMW définitif, contraintes, hypothèses, métriques, backlog S3, journal de prompts |
+| Livrable 3 (S3) | `feature/livrable3` | à venir |
+
+Convention :
+
+1. Créer la branche depuis `main` : `feature/livrableN`.
+2. Un commit par livrable, avec un message explicite (`feat(SN): …` / `docs: …`).
+3. Ouvrir une Pull Request `feature/livrableN` → `main`, la faire relire, puis fusionner.
+4. Marquer la version rendue avec un tag `livrable-N`.
+
 ## Organisation du dépôt
 
 ```
 GET409-Systeme-Pointage/
-├── README.md              ← carte d'identité du projet
-├── fiche-equipe.md        ← fiche d'équipe (livrable obligatoire)
-├── carte-empathie.md      ← carte d'empathie (livrable obligatoire S1)
-├── hmw.md                 ← énoncés « Comment pourrions-nous… ? »
-├── journal-prompts.md     ← prompts utilisés et résultats
+├── README.md               ← carte d'identité du projet (HMW définitif)
+├── fiche-equipe.md         ← S1 · fiche d'équipe
+├── carte-empathie.md       ← S1 · carte d'empathie
+├── hmw.md                  ← S1 · HMW draft (5 formulations)
+├── journal-prompts.md      ← S1 + S2 · journal de prompts
 ├── docs/
-│   ├── cadrage-defi.md    ← Prompt S1 : 3 problèmes du secteur
-│   └── guide-interview.md ← Prompt S2 : guide + notes d'interview
+│   ├── cadrage-defi.md         ← S1 · problèmes du secteur
+│   ├── guide-interview.md      ← S1 · guide + notes d'interview
+│   ├── chapeaux-bono.md        ← S2 · 6 Chapeaux
+│   ├── contraintes-mvp.md      ← S2 · contraintes non négociables
+│   ├── hypotheses-validation.md← S2 · ce qu'on valide en S3
+│   ├── metriques-succes.md     ← S2 · ce qu'on mesure en S6
+│   ├── vpc.md                  ← S2 · Value Proposition Canvas
+│   ├── vpc-connections.md      ← S2 · traçabilité Chapeaux → VPC
+│   ├── backlog-s3.md           ← S2 · user stories S3
+│   ├── pitch-vpc-draft.md      ← S2 · bloc pitch soutenance
+│   ├── hmw-definitif.md        ← S2 · HMW définitif
+│   ├── hmw-alignement.md       ← S2 · filtre sprint S3
+│   └── hmw-jury.md             ← S2 · préparation soutenance
+└── livrables/              ← PDF (fiche d'équipe, carte d'empathie, VPC)
 ```
 
 ## Prochaines étapes
 
-- **S2** — Idéation (6 chapeaux de Bono), Value Proposition Canvas, approfondissement du Prompt Engineering.
 - **S3** — Construction des agents IA (livrable 3).
 - **S4** — Prototype MVP avec Bolt.new.
