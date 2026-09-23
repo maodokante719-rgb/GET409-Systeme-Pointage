@@ -142,7 +142,7 @@ Génère la Carte d'Empathie complète.
 
 | # | Technique | Objectif | Note |
 |---|---|---|---|
-| P1 | Zero-Shot | 3 principaux problèmes du persona | 4/5 |
+| P1 | Zero-Shot | 3 principaux problèmes du persona | v1 4/5 → v2 5/5 (itération) |
 | P2 | Zero-Shot | 5 idées de fonctionnalités pour le MVP | 4/5 |
 | P3 | Few-Shot | Compléter un 3e couple Défi → Solution | 4/5 |
 | P4 | Chain-of-Thought | Cause → obstacle → solution | 5/5 |
@@ -163,7 +163,36 @@ Réponds sous forme de liste numérotée, en français.
 
 **Réponse IA (résumé) :** (1) émargement papier non fiable et signatures pour un collègue ; (2) consolidation manuelle de la paie sur plusieurs jours ; (3) présence des techniciens terrain invérifiable. Pistes : pointage mobile, calcul automatique, pointage lié à la mission.
 **Note : 4/5** — pertinent et ancré dans le persona ; les pistes restent générales et doivent être confrontées à de vraies RH (hypothèse C1).
-**Itération :** non nécessaire (≥ 3/5). À la relecture, l'équipe a précisé que la vérification du lieu se fait uniquement au moment du pointage (contraintes-mvp.md, C2).
+**Itération :** oui — la réponse v1 était une liste difficile à réutiliser et ses pistes restaient générales. P1 a été rejoué avec un format de sortie contraint (tableau), comme le propose le cours pour approfondir le Zero-Shot. Voir P1 v2 ci-dessous.
+
+### P1 v2 — Zero-Shot · format tableau (itération)
+
+**Ce qui a changé :** format de sortie imposé (tableau à 5 colonnes), contrainte éthique ajoutée (pas de suivi continu), et une colonne « hypothèse à valider » pour relier chaque problème à la S3.
+
+**Prompt envoyé :**
+
+```text
+Tu es consultant en gestion des ressources humaines pour les PME au Sénégal.
+Identifie les 3 principaux problèmes de Ndèye Fatou Sarr, responsable RH d'une
+PME de services à Dakar (3 sites + techniciens en intervention chez les clients,
+environ 70 employés), dans la gestion des présences de ses employés.
+Contrainte : aucune solution ne doit reposer sur un suivi GPS en continu.
+Réponds uniquement par un tableau Markdown à 5 colonnes :
+Problème | Cause principale | Impact pour la RH | Piste numérique | Hypothèse à valider en S3
+Une ligne par problème, 15 mots maximum par cellule, en français.
+```
+
+**Réponse IA (résumé) :**
+
+| Problème | Cause principale | Impact pour la RH | Piste numérique | Hypothèse à valider en S3 |
+|---|---|---|---|---|
+| Émargement non fiable | Feuille papier signée sans contrôle, parfois pour un collègue | Aucune preuve en cas de litige | Pointage personnel vérifié sur le lieu au moment du pointage | Les employés acceptent de pointer avec leur téléphone |
+| Consolidation manuelle | Feuilles des sites reçues en photo WhatsApp, ressaisie Excel | 3 à 4 jours par mois, erreurs de paie | Récapitulatif mensuel calculé et exporté automatiquement | L'export convient au logiciel ou au tableur de paie |
+| Terrain invérifiable | Techniciens chez les clients, simple message WhatsApp | Contestations des retenues | Pointage « mission » validé par le chef d'équipe | Le chef d'équipe valide dans la journée |
+
+**Note : 5/5** — directement réutilisable : chaque ligne relie un problème à une user story (US-01, US-03, US-05) et à une hypothèse testable ; la contrainte anti-surveillance est respectée.
+**Itération :** non nécessaire. Le tableau a servi de base à [docs/hypotheses-validation.md](./docs/hypotheses-validation.md) et au backlog S3.
+**Leçon :** à prompt identique, imposer un format de sortie plus contraignant produit un livrable plus exploitable (v1 4/5 → v2 5/5).
 
 ## P2 — Zero-Shot
 
@@ -283,12 +312,11 @@ FORMAT DE SORTIE STRICT — Markdown pur, sans introduction, sans conclusion.
 | P-VPC-PITCH | [docs/pitch-vpc-draft.md](./docs/pitch-vpc-draft.md) | 4/5 | Chiffres présentés comme objectifs, pas comme résultats |
 | P-HMW-ALIGNEMENT | [docs/hmw-alignement.md](./docs/hmw-alignement.md) | 5/5 | Ordre de construction S3 : US-01, US-03, US-02 |
 | P-HMW-JURY | [docs/hmw-jury.md](./docs/hmw-jury.md) | 4/5 | 5 questions + 2 pièges, réponses traçables dans le dépôt |
-
-> P-HMW-DEMO (script de démo S6) sera produit après la construction du MVP (S3-S5) : il nécessite des résultats réels.
+| P-HMW-DEMO | [docs/hmw-demo.md](./docs/hmw-demo.md) | 4/5 | Version S2 prévisionnelle : script complet, métriques réelles à compléter en S6 |
 
 ## Leçons retenues (S2)
 
-1. **Zero-Shot** : la formule Rôle + Contexte + Tâche + Format du cours suffit à obtenir une réponse exploitable (P1, P2 : 4/5) ; sans elle, la réponse reste générique.
+1. **Zero-Shot** : la formule Rôle + Contexte + Tâche + Format du cours suffit à obtenir une réponse exploitable (P1, P2 : 4/5) ; imposer un format de sortie contraint (tableau) la rend directement réutilisable (P1 v2 : 5/5).
 2. **Few-Shot** : deux exemples suffisent pour imposer le format et le ton de la réponse (P3).
 3. **Chain-of-Thought** : le raisonnement étape par étape donne une analyse vérifiable, sans chiffre inventé (P4).
 4. Relire chaque sortie avec la question « est-ce qu'on l'a entendu en interview ? » évite d'intégrer des idées hors sujet.
