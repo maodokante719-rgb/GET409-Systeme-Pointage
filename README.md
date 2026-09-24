@@ -1,7 +1,7 @@
 # GET409 — Systeme-Pointage
 
 > Plateforme de gestion du pointage (présences, retards, heures supplémentaires) pour les entreprises au Sénégal.
-> Module GET 409 — Atelier IA · Swiss UMEF University, Campus de Dakar · 2025-2026 · Séances 1-2 (Empathize → Define → Ideate)
+> Module GET 409 — Atelier IA · Swiss UMEF University, Campus de Dakar · 2025-2026 · Séances 1-3 (Empathize → Define → Ideate → Agents IA)
 
 ## Notre équipe
 
@@ -50,6 +50,28 @@ Les 5 formulations étudiées en S1 : [hmw.md](./hmw.md)
 3. **US-02** — Tableau de bord RH du jour
 
 Détail : [docs/backlog-s3.md](./docs/backlog-s3.md)
+
+## Séance 3 — Agent IA multi-agents avec Dify
+
+> Agent **Chercheur → Rédacteur** qui produit un **rapport d'anomalies de présence** pour la RH (US-03). Workflow Dify `SystemePointage_RapportAnomalies_v1_SystemePointage`, modèle `openai/gpt-oss-120b` via GroqCloud.
+
+```mermaid
+flowchart LR
+    A["DÉBUT<br/>query"] --> B["CHERCHEUR<br/>Zero-Shot · T 0,3"]
+    B --> C{"SI/SINON<br/>contient INSUFFISANT ?"}
+    C -->|IF| D["Sortie<br/>message_erreur"]
+    C -->|ELSE| E["REDACTEUR<br/>Few-Shot · T 0,7"]
+    E --> F["Sortie 2<br/>rapport"]
+```
+
+| Livrable | Contenu | Où |
+|---|---|---|
+| **L1** — Agent V1 fonctionnel (40 pts) | URL publique + captures des tests (précis → rapport, vague → INSUFFISANT) | [docs/s3/agent-dify.md](./docs/s3/agent-dify.md) · [captures](./livrables/captures-s3/) |
+| **L2** — Schéma d'architecture (30 pts) | Capture du workflow Dify annotée : nœuds, connexions, variables, paramètres | [PNG](./livrables/GET409-Systeme-Pointage_Architecture_S3.png) · [détail](./docs/s3/agent-dify.md#l2--schéma-darchitecture) |
+| **L3** — Journal de prompts S3 (20 pts) | 4 prompts (P6 Zero-Shot, P7 logique conditionnelle, P8 Few-Shot, P9 CoT), notés /5, avec itérations | [journal-prompts.md](./journal-prompts.md#séance-3--journal-de-prompts-livrable-l3--agent-dify) · [prompts exacts](./docs/s3/prompts-agent.md) |
+| **L4** — Réflexion éthique (10 pts) | 3 risques propres à l'agent + garde-fous techniques et organisationnels + recommandation (pilote contrôlé) | [docs/s3/reflexion-ethique.md](./docs/s3/reflexion-ethique.md) · [Word](./livrables/GET409-Systeme-Pointage_L4_Reflexion_Ethique_S3.docx) |
+
+Données de test (fictives) : [docs/s3/jeu-de-test.md](./docs/s3/jeu-de-test.md)
 
 ## Carte d'empathie (livrable obligatoire S1)
 
@@ -165,7 +187,7 @@ Chaque livrable est préparé sur sa propre branche, puis fusionné dans `main` 
 |---|---|---|
 | Livrable 1 (S1) | `feature/livrable1` | Fiche d'équipe, carte d'empathie, HMW draft, guide d'interview |
 | Livrable 2 (S2) | `feature/livrable2` | 6 Chapeaux, VPC, HMW définitif, contraintes, hypothèses, métriques, backlog S3, script démo, pitch HMW, journal de prompts |
-| Livrable 3 (S3) | `feature/livrable3` | à venir |
+| Livrable 3 (S3) | `feature/livrable3` | Agent Dify (L1), schéma d'architecture (L2), journal de prompts S3 (L3), réflexion éthique (L4) |
 
 Convention :
 
@@ -182,7 +204,7 @@ GET409-Systeme-Pointage/
 ├── fiche-equipe.md         ← S1 · fiche d'équipe
 ├── carte-empathie.md       ← S1 · carte d'empathie
 ├── hmw.md                  ← S1 · HMW draft (5 formulations)
-├── journal-prompts.md      ← S1 + S2 · journal de prompts
+├── journal-prompts.md      ← S1 + S2 + S3 · journal de prompts
 ├── docs/
 │   ├── cadrage-defi.md         ← S1 · problèmes du secteur
 │   ├── guide-interview.md      ← S1 · guide + notes d'interview
@@ -198,11 +220,15 @@ GET409-Systeme-Pointage/
 │   ├── hmw-alignement.md       ← S2 · filtre sprint S3
 │   ├── hmw-demo.md             ← S2 · script démo S6
 │   ├── pitch-hmw.md            ← S2 · pitch HMW 2 minutes
-│   └── hmw-jury.md             ← S2 · préparation soutenance
-└── livrables/              ← PDF (fiche d'équipe, carte d'empathie, VPC, slide du pitch HMW)
+│   ├── hmw-jury.md             ← S2 · préparation soutenance
+│   └── s3/
+│       ├── agent-dify.md           ← S3 · L1 agent + L2 architecture
+│       ├── prompts-agent.md        ← S3 · prompts exacts Chercheur / Rédacteur
+│       ├── jeu-de-test.md          ← S3 · données de test fictives
+│       └── reflexion-ethique.md    ← S3 · L4 réflexion éthique
+└── livrables/              ← PDF/PNG/DOCX (S1, S2, S3) + captures-s3/
 ```
 
 ## Prochaines étapes
 
-- **S3** — Construction des agents IA (livrable 3).
 - **S4** — Prototype MVP avec Bolt.new.
