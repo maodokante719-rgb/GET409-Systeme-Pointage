@@ -320,3 +320,112 @@ FORMAT DE SORTIE STRICT — Markdown pur, sans introduction, sans conclusion.
 2. **Few-Shot** : deux exemples suffisent pour imposer le format et le ton de la réponse (P3).
 3. **Chain-of-Thought** : le raisonnement étape par étape donne une analyse vérifiable, sans chiffre inventé (P4).
 4. Relire chaque sortie avec la question « est-ce qu'on l'a entendu en interview ? » évite d'intégrer des idées hors sujet.
+
+---
+
+# Séance 3 — Journal de Prompts (Livrable L3 · agent Dify)
+
+> Format imposé par le cours : technique, prompt exact, résultat, note /5 avec justification, itération.
+> Contexte : workflow Dify `SystemePointage_RapportAnomalies_v1_SystemePointage` (DÉBUT → CHERCHEUR → SI/SINON → REDACTEUR → Sortie). Modèle : `openai/gpt-oss-120b` via GroqCloud. Détails : [docs/s3/agent-dify.md](./docs/s3/agent-dify.md) · prompts complets : [docs/s3/prompts-agent.md](./docs/s3/prompts-agent.md) · données de test : [docs/s3/jeu-de-test.md](./docs/s3/jeu-de-test.md).
+
+| # | Nœud / usage | Technique | Modèle du cours adapté | Note |
+|---|---|---|---|---|
+| P6 | Prompt système CHERCHEUR | Zero-Shot structuré | E2 / S3 | v1 1/5 → v2 4/5 (itération) |
+| P7 | Condition SI/SINON + test des 2 branches | Logique conditionnelle (contrat d'interface) | E3 / S4 | v1 0/5 → v2 5/5 (itération) |
+| P8 | Prompt système REDACTEUR | Few-Shot | E4 / S5 | 4/5 |
+| P9 | Réflexion éthique sur notre agent | Chain-of-Thought | E5 / S6 | 5/5 |
+
+## P6 — Zero-Shot structuré · Prompt système du CHERCHEUR
+
+**Pourquoi Zero-Shot :** le Chercheur doit *appliquer des règles* (horaires, tolérance, définitions des anomalies), pas imiter un style. On lui donne donc un rôle, des règles explicites, un processus en 3 étapes et un **format de sortie obligatoire**, sans exemple. Donner un exemple aurait risqué que le modèle recopie des anomalies de l'exemple.
+
+**Prompt :** voir le texte complet dans [docs/s3/prompts-agent.md](./docs/s3/prompts-agent.md#nœud-chercheur). Il contient le rôle d'analyste RH Systeme-Pointage, les 7 règles de référence, le processus ANALYSER → EXAMINER → ÉVALUER, le format `SITE / PÉRIODE / ANOMALIES / TOTAUX / DONNÉES MANQUANTES` et la réponse unique `INSUFFISANT : [raison]`. Deux interdits : inventer une donnée, proposer une sanction.
+
+**v1 (état initial du workflow) :** champ SYSTEM vide, aucun message USER relié à `query`, température 0,7. **Note 1/5** : le nœud ne recevait pas la question et n'avait aucune consigne.
+
+**Itération → v2 :** prompt ci-dessus, message USER `{{#Début.query#}}`, température 0,3.
+
+**Résultat v2 (test 1, pointages de Pikine) :** 6 anomalies détectées sur les 6 attendues, 0 faux positif, et la ligne « DONNÉES MANQUANTES : pointages du 18/09 et du 19/09 non fournis » ajoutée spontanément. 2 514 tokens.
+```text
+- Moussa Fall | 16/09 | retard | arrivée 08h31 (21 min après 08h10)
+- Moussa Fall | 17/09 | oubli de départ | arrivée 08h02, départ manquant
+- Aïssatou Ba | 15/09 | heures sup | 1h40 (de 17h30 à 19h10)
+- Cheikh Ndiaye | 15/09 | hors zone | lieu Guédiawaye (hors site prévu)
+- Cheikh Ndiaye | 16/09 | mission non validée | ...
+- Cheikh Ndiaye | 17/09 | absence | aucun pointage
+```
+
+**Note v2 : 4/5.** Le format est respecté à la lettre et aucune donnée n'est inventée. Il reste une ambiguïté dans nos propres règles : l'écart de retard est compté depuis 08h10 (« +21 min ») au lieu de 08h00 (31 min), et les heures sup depuis 17h30 au lieu de 17h00. Le modèle a appliqué les règles telles qu'on les a écrites : c'est le prompt qu'il faut préciser, pas le modèle qui s'est trompé.
+**Itération prévue (v3) :** ajouter « l'écart de retard se mesure depuis 08h00 ; les heures sup se comptent depuis 17h00 dès que le départ dépasse 17h30 ». Il faudra ensuite faire valider cette règle par la RH, car c'est une règle de paie et elle ne relève pas de l'IA.
+
+## P7 — Logique conditionnelle · SI/SINON et contrat d'interface `INSUFFISANT`
+
+**Configuration :** `CHERCHEUR.text` **contient** `INSUFFISANT`. IF → Sortie (`message_erreur`), ELSE → REDACTEUR → Sortie 2 (`text`).
+
+**v1 (état initial) :** valeur de la condition `INSUFISSANT` (faute de frappe), REDACTEUR branché *après* Sortie 2, sorties sans variable. **Note 0/5** : la branche IF ne pouvait jamais se déclencher et le Rédacteur ne s'exécutait jamais.
+
+**Itération → v2 :** faute corrigée (copier-coller exact de `INSUFFISANT`), ordre ELSE → REDACTEUR → Sortie 2, variables de sortie ajoutées.
+
+**Procédure de test S4 (les 2 branches) :**
+
+| Test | Question | Attendu | Obtenu |
+|---|---|---|---|
+| Branche TRUE | « Retards ? » | `INSUFFISANT : …` → Sortie, sans Rédacteur | ✅ `INSUFFISANT : aucune donnée de pointage, site ou période fournie dans le message.` (747 tokens, 1,2 s) |
+| Branche FALSE | Pointages de Pikine | Rapport complet | ✅ Rapport en 7,6 s |
+
+**Note v2 : 5/5.** Les deux branches fonctionnent. La faute `INSUFISSANT` illustre la leçon du cours : le mot-clé est un **protocole** entre agents, et une seule lettre de travers suffit à le casser.
+
+## P8 — Few-Shot · Prompt système du REDACTEUR
+
+**Pourquoi Few-Shot :** un rapport RH doit avoir **toujours la même forme**, pour que la RH le lise en 30 secondes et puisse comparer les semaines entre elles. Un exemple complet (résumé, anomalies, totaux, actions, avertissement) fixe ce format. Les employés de l'exemple sont anonymes (Employé A, B, C) et le prompt interdit de réutiliser leurs chiffres.
+
+**Prompt :** voir [docs/s3/prompts-agent.md](./docs/s3/prompts-agent.md#nœud-redacteur).
+
+**Résultat (test 1) :** rapport de 5 sections conforme à l'exemple. Les 6 anomalies sont reprises sans en ajouter, les 5 actions recommandées sont toutes des **vérifications** (confirmer, vérifier, faire valider) et aucune n'est une sanction. L'avertissement final est présent. 2 313 tokens.
+
+**Note : 4/5.** Format, ton et règle anti-sanction sont respectés. Deux défauts mineurs : une faute d'accord (« 1 oublis de départ ») et des balises Markdown `**` qui s'affichent telles quelles dans certaines vues.
+**Itération prévue :** ajouter « texte brut, sans Markdown » dans les règles.
+
+## P9 — Chain-of-Thought · Réflexion éthique sur notre agent
+
+**Outil :** Claude. **Pourquoi CoT :** on veut des risques *propres à notre agent*, pas une liste générique. Raisonner étape par étape (risques → gravité → garde-fous) oblige à partir de ce que fait réellement l'agent.
+
+**Prompt envoyé** (modèle S6 du cours, `[crochets]` remplacés) :
+```text
+Analyse les enjeux éthiques de MON agent Dify.
+Raisonne étape par étape. Sois spécifique à mon cas.
+MON AGENT :
+Nom : SystemePointage_RapportAnomalies_v1
+Ce qu'il fait : à partir d'un extrait de pointages collé par la responsable RH
+(site, période, arrivées/départs, lieu), un agent Chercheur classe les anomalies
+(retard, absence, oubli de départ, hors zone, mission non validée, heures sup),
+puis un agent Rédacteur produit un rapport d'anomalies avec des actions de vérification.
+Données utilisées : noms des employés, heures d'arrivée et de départ, site ou statut
+« hors zone », statut de mission.
+Utilisateurs : responsable RH d'une PME de services multi-sites de Dakar (≈ 70 employés) ;
+personnes concernées : employés de bureau, agents de dépôt, techniciens terrain.
+Contexte : Sénégal · RH / gestion des présences · No-code (Dify + GroqCloud, modèle gpt-oss-120b)
+ÉTAPE 1 — IDENTIFIER 3 RISQUES CONCRETS : nomme-le, décris le scénario, QUI est impacté et COMMENT.
+ÉTAPE 2 — ÉVALUER LA GRAVITÉ : probabilité, impact, urgence.
+ÉTAPE 3 — PROPOSER DES GARDE-FOUS : 1 mesure technique, 1 message de transparence,
+1 règle à intégrer dans le prompt système.
+LIVRABLE ATTENDU : un texte de ½ page directement utilisable pour le livrable L4.
+```
+
+**Réponse IA (résumé) :**
+
+| Risque | Probabilité | Impact | Urgence |
+|---|---|---|---|
+| Anomalie erronée → retenue sur salaire injuste | moyenne | majeur | avant déploiement |
+| Données RH personnelles envoyées à un fournisseur étranger (loi n° 2008-12, CDP) | élevée (à chaque exécution) | majeur | avant déploiement |
+| Dépendance à un fournisseur gratuit (modèles retirés sans préavis) | élevée (déjà vécue en S3) | modéré | avant le pilote |
+
+**Note : 5/5.** Les 3 risques viennent de notre agent : le 3ᵉ, nous l'avons vécu pendant la séance (Kimi-K2 et Llama-3.1 devenus inaccessibles). Deux garde-fous étaient déjà dans les prompts : l'interdiction de proposer une sanction dans le Rédacteur et l'interdiction d'inventer dans le Chercheur.
+**Itération :** non nécessaire. Le texte a été resserré pour tenir dans le format du L4 : [docs/s3/reflexion-ethique.md](./docs/s3/reflexion-ethique.md).
+
+## Leçons retenues (S3)
+
+1. **Zero-Shot structuré** pour un agent qui *applique des règles* ; **Few-Shot** pour un agent qui *doit respecter un format* ; **CoT** pour une analyse qu'on veut vérifier étape par étape.
+2. Dans une architecture multi-agents, le prompt sert aussi de **contrat d'interface** : un seul mot (`INSUFFISANT`) mal orthographié casse tout le pipeline.
+3. Les erreurs de résultat venaient de nos règles (retard mesuré depuis 08h10), pas du modèle : **une règle de paie doit être écrite sans ambiguïté et validée par la RH**.
+4. Un workflow no-code dépend de son fournisseur : les 2 modèles prévus (Kimi-K2, puis Llama-3.1-8b du tutoriel) n'étaient plus accessibles le jour du TP.
