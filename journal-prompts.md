@@ -429,3 +429,120 @@ LIVRABLE ATTENDU : un texte de ½ page directement utilisable pour le livrable L
 2. Dans une architecture multi-agents, le prompt sert aussi de **contrat d'interface** : un seul mot (`INSUFFISANT`) mal orthographié casse tout le pipeline.
 3. Les erreurs de résultat venaient de nos règles (retard mesuré depuis 08h10), pas du modèle : **une règle de paie doit être écrite sans ambiguïté et validée par la RH**.
 4. Un workflow no-code dépend de son fournisseur : les 2 modèles prévus (Kimi-K2, puis Llama-3.1-8b du tutoriel) n'étaient plus accessibles le jour du TP.
+
+---
+
+# Séance 4 — Journal de Prompts (Livrable L3 · MVP Lovable)
+
+> Format du cours : prompt exact, type, résultat, analyse, note /5. Règle suivie pour les itérations : **1 prompt = 1 modification**.
+> Outil : Lovable.dev · MVP en ligne : <https://exact-screen-match-154.lovable.app> · Détail du MVP et note d'itération (L4) : [docs/s4/mvp-lovable.md](./docs/s4/mvp-lovable.md).
+
+| # | Type | Objectif | Résultat | Note |
+|---|---|---|---|---|
+| P0 | Initialisation | Générer les 3 pages à partir du template du cours | ✅ App générée, mais rendu « générique » | 3/5 |
+| P0 v2 | Initialisation (refonte) | Rendu de vrai logiciel RH + données alignées sur la base Dify | ✅ 3 pages refaites, tableau RH, historique | 4/5 |
+| P1 | Correction | Corriger les dates (le 16/09/2026 est un mercredi) | ✅ | 5/5 |
+| P2 | Amélioration visuelle | Section « Avant / Avec Systeme-Pointage » | ✅ | 5/5 |
+| P3 | Amélioration fonctionnelle | Bouton « Exporter (CSV) » + état vide des filtres | ✅ | 5/5 |
+
+## P0 — Prompt d'initialisation (template Lovable du cours)
+
+**Prompt envoyé** (extrait — les `[PLACEHOLDERS]` du template remplacés par notre projet) :
+```text
+Crée une application web complète appelée Systeme-Pointage.
+CONTEXTE
+Systeme-Pointage est une plateforme numérique qui permet aux employés de pointer leur arrivée
+et leur départ depuis leur téléphone, avec vérification du lieu au moment du pointage, pour les
+responsables RH des PME multi-sites de Dakar (siège, agences, dépôts et techniciens en mission)
+afin de remplacer les feuilles d'émargement papier et WhatsApp, et de clôturer les éléments de
+paie en moins d'une journée, sans contestation.
+PAGES À CRÉER (3 pages)
+1. ACCUEIL → Header : logo emoji ⏱️ + nom · Hero « Des présences fiables, une paie sans litige »
+   + 2 CTA · Section chiffres (3 objectifs) · Footer (loi n° 2008-12 — CDP)
+2. POINTAGES DU JOUR → 6 employés (Nom, Site, Heure d'arrivée, statut) · filtres
+   Tous | Plateau | Pikine | Diamniadio | Terrain · pastilles Présent / Mission / En retard / Absent
+3. CONTACT → formulaire 6 champs · adresse (coordonnées fictives de démonstration)
+DESIGN → #0F766E, blanc, accent #F59E0B, Inter, mobile first 768px, navigation fixe
+DONNÉES → 6 employés fictifs (S38-2026) : Awa Diop, Moussa Fall, Aïssatou Ba, Ibrahima Sarr,
+Cheikh Ndiaye, Fatou Gueye
+STACK → React + Tailwind CSS + Vite · JSON local · composants Navbar, EmployeeCard, StatusBadge…
+```
+
+**Résultat :** les 3 pages, la navigation, les filtres et le formulaire fonctionnent du premier coup.
+**Analyse — note 3/5 :** le cahier des charges est respecté, mais le rendu ressemble à un site généré par IA (logo emoji, grosses cartes, héros centré avec 3 chiffres). Deux employés n'étaient pas sur le même site que dans la base de connaissances de l'agent Dify (Ibrahima Sarr, Fatou Gueye) : incohérent pour la démo S5.
+
+## P0 v2 — Refonte « vrai logiciel RH »
+
+**Prompt envoyé** (extrait) :
+```text
+# DIRECTION ARTISTIQUE — IMPORTANT
+Le site doit ressembler à un vrai logiciel RH en production (références : Jibble, Connecteam,
+Deputy, Factorial), PAS à un template généré.
+INTERDIT : dégradés violet/bleu, glassmorphism, emoji comme logo ou dans les titres, blobs
+décoratifs, textes vagues (« révolutionnez », « boostez »)…
+À FAIRE : logo monogramme « SP » · maquettes réalistes de l'interface (écran de pointage mobile,
+tableau de bord RH) en HTML/CSS · grille 12 colonnes · bordures fines plutôt qu'ombres.
+1. ACCUEIL → hero 2 colonnes « Fini les feuilles d'émargement. La paie se clôture en une journée. »
+   + maquette téléphone « Bonjour Moussa · 07:58 · Agence de Pikine · position vérifiée » ·
+   « Comment ça marche » en 4 étapes · « 3 façons de pointer » en onglets · « Pensé pour Dakar » ·
+   objectifs du pilote · footer 4 colonnes
+2. POINTAGES DU JOUR → tableau dense (avatar, matricule, site, arrivée, départ, statut) ·
+   compteurs · filtres en onglets · « Voir l'historique » (panneau latéral) · liste compacte sur mobile
+3. CONTACT → 2 colonnes, formulaire + confirmation, encart « Démo de 30 min »
+DONNÉES → EMP-001 Awa Diop (Plateau) · EMP-004 Moussa Fall (Pikine, +31 min) · EMP-005 Aïssatou Ba
+(Pikine) · EMP-006 Ibrahima Sarr (Pikine, absent) · EMP-009 Cheikh Ndiaye (Terrain, mission
+validée) · EMP-007 Fatou Gueye (Diamniadio)
+STACK → React + Tailwind + Vite + React Router · composants PhoneMockup, StepsStrip, ClockInTabs,
+AttendanceTable, StatusDot, HistoryDrawer, ContactForm
+```
+
+**Résultat :** 3 pages refaites, logo « SP », maquette du téléphone, tableau RH avec matricules et panneau d'historique, liste compacte sur mobile.
+**Analyse — note 4/5 :** le site se lit comme un vrai produit et les matricules/sites correspondent maintenant à la base `GET409-Systeme-Pointage_Base_Pointages_S38.csv` de l'agent Dify. Défaut : le prompt contenait une erreur de date (« Mardi 16 septembre 2026 » alors que c'est un mercredi), que Lovable a reprise telle quelle → corrigée en P1. Leçon : **Lovable exécute le prompt, il ne vérifie pas les faits**.
+
+> Incident de parcours : un prompt destiné à une autre maquette (« Pointage Sûr », thème sombre) a été envoyé par erreur dans ce projet le 29/09. Nous avons utilisé **Revert to this version** pour revenir à la version P0 v2 avant les itérations P1-P3 (messages annulés visibles dans l'historique Lovable).
+
+## P1 — Correction : dates
+
+```text
+Corrige les dates : le 16 septembre 2026 est un mercredi. Remplace « Mardi 16 septembre » par
+« Mercredi 16 septembre 2026 » partout (téléphone de l'accueil et page Pointages du jour), et dans
+l'historique du téléphone remplace « Ven. 12/09 » par « Ven. 11/09 ». Ne change rien d'autre.
+```
+**Résultat :** ✅ « Dates corrigées : Mercredi 16 septembre 2026 sur le téléphone de l'accueil et la page Pointages du jour, et Ven. 11/09 dans l'historique du téléphone. Rien d'autre n'a été touché. »
+**Analyse — note 5/5 :** prompt de correction ciblé (ancienne valeur → nouvelle valeur + « ne change rien d'autre ») : une seule modification, aucun effet de bord. Consommation faible.
+
+## P2 — Amélioration visuelle : « Ce qui change pour votre entreprise »
+
+```text
+Sur la page Accueil, juste après le hero, ajoute une section « Ce qui change pour votre
+entreprise » avec deux cartes côte à côte (empilées sur mobile), dans le style actuel :
+1) « Aujourd'hui, sans outil » (fond gris très clair, petites croix grises) : Feuille
+d'émargement signée à l'entrée · Retards signalés par WhatsApp · Heures recopiées à la main dans
+Excel · 3 à 4 jours pour clôturer la paie · Retards et absences découverts en fin de mois ·
+Litiges sur les retenues, sans preuve.
+2) « Avec Systeme-Pointage » (bordure couleur principale, coches) : Pointage sur le téléphone de
+l'employé · Lieu vérifié au moment du pointage · Présences visibles en direct pour chaque site ·
+Paie clôturée en moins d'une journée · Rapport des anomalies chaque semaine · Historique horodaté
+en cas de désaccord. Ne change rien d'autre.
+```
+**Résultat :** ✅ section ajoutée juste après le hero, carte grise avec croix / carte à bordure verte avec coches, empilées sur mobile.
+**Analyse — note 5/5 :** c'était le principal manque du MVP : un visiteur ne voyait pas **ce qui existait avant** l'application. Les 6 lignes reprennent les Pains / Pain relievers du VPC (S2), donc le texte vient de notre recherche utilisateur, pas de l'IA.
+
+## P3 — Amélioration fonctionnelle : export CSV
+
+```text
+Sur la page Pointages du jour, ajoute un bouton « Exporter (CSV) » (style contour) à droite du
+titre. Au clic, il télécharge un fichier pointages-2026-09-16.csv avec les lignes actuellement
+affichées selon le filtre choisi (colonnes : Matricule, Nom, Site, Arrivée, Départ, Statut). Si
+un filtre ne donne aucun résultat, affiche « Aucun pointage pour ce site aujourd'hui. » Ne change
+rien d'autre.
+```
+**Résultat :** ✅ bouton « Exporter (CSV) » visible à droite du titre (vérifié en ligne). Selon Lovable, le fichier suit le filtre actif et le message d'état vide s'affiche si un site n'a aucun pointage. Lovable a aussi appliqué une mise à jour de sécurité de ses dépendances.
+**Analyse — note 5/5 :** c'est la 2ᵉ fonctionnalité testable du MVP (après les filtres) et elle répond à la user story US-03 « export pour la paie ». Le CSV a les mêmes colonnes que la base de l'agent Dify : il pourra servir d'entrée au rapport d'anomalies en S5.
+
+## Leçons retenues (S4)
+
+1. Un prompt d'initialisation doit dire **ce qu'on ne veut pas** (look IA, emoji, textes vagues) autant que ce qu'on veut : la refonte P0 v2 a plus changé le rendu que les 3 itérations réunies.
+2. **1 prompt = 1 modification** + « Ne change rien d'autre » : 3 itérations sur 3 réussies du premier coup, sans régression.
+3. Lovable ne vérifie pas les faits (date erronée reprise telle quelle) : relire les données du prompt avant de l'envoyer.
+4. L'historique Lovable (**Revert**) nous a sauvés d'une erreur de manipulation : toujours vérifier l'URL publiée après chaque session.

@@ -1,7 +1,9 @@
 # GET409 — Systeme-Pointage
 
 > Plateforme de gestion du pointage (présences, retards, heures supplémentaires) pour les entreprises au Sénégal.
-> Module GET 409 — Atelier IA · Swiss UMEF University, Campus de Dakar · 2025-2026 · Séances 1-3 (Empathize → Define → Ideate → Agents IA)
+>
+> **MVP en ligne :** <https://exact-screen-match-154.lovable.app>
+> Module GET 409 — Atelier IA · Swiss UMEF University, Campus de Dakar · 2025-2026 · Séances 1-4 (Empathize → Define → Ideate → Agents IA → MVP)
 
 ## Notre équipe
 
@@ -72,6 +74,17 @@ flowchart LR
 | **L4** — Réflexion éthique (10 pts) | 3 risques propres à l'agent + garde-fous techniques et organisationnels + recommandation (pilote contrôlé) | [docs/s3/reflexion-ethique.md](./docs/s3/reflexion-ethique.md) · [Word](./livrables/GET409-Systeme-Pointage_L4_Reflexion_Ethique_S3.docx) |
 
 Données de test (fictives) : [docs/s3/jeu-de-test.md](./docs/s3/jeu-de-test.md)
+
+## Séance 4 — MVP V1 avec Lovable.dev
+
+> MVP en ligne : **<https://exact-screen-match-154.lovable.app>** — 3 pages (Accueil · Pointages du jour · Contact), React + Tailwind CSS + Vite, données fictives de démonstration alignées sur la base de l'agent Dify.
+
+| Livrable | Contenu | Où |
+|---|---|---|
+| **L1** — MVP V1 en ligne (35 pts) | URL lovable.app publiée : filtres par site, historique employé, export CSV, formulaire de démo | <https://exact-screen-match-154.lovable.app> · [docs/s4/mvp-lovable.md](./docs/s4/mvp-lovable.md) |
+| **L2** — Projet public + README (25 pts) | Site publié « visible par toute personne ayant le lien » + ce README | [docs/s4/mvp-lovable.md](./docs/s4/mvp-lovable.md) |
+| **L3** — Journal de prompts S4 (25 pts) | Prompt d'initialisation + refonte + 3 itérations (correction · visuelle · fonctionnelle), analysés et notés /5 | [journal-prompts.md](./journal-prompts.md#séance-4--journal-de-prompts-livrable-l3--mvp-lovable) · [PDF L3 + L4](./livrables/GET409-Systeme-Pointage_L3-L4_Journal_Note_S4.pdf) |
+| **L4** — Captures + note d'itération (15 pts) | 2 captures ordinateur + 2 captures mobile + ½ page « ce que nous avons changé et pourquoi » | [captures](./livrables/captures-s4/) · [note](./docs/s4/mvp-lovable.md#note-ditération-l4--ce-que-nous-avons-changé-et-pourquoi) |
 
 ## Carte d'empathie (livrable obligatoire S1)
 
@@ -188,6 +201,7 @@ Chaque livrable est préparé sur sa propre branche, puis fusionné dans `main` 
 | Livrable 1 (S1) | `feature/livrable1` | Fiche d'équipe, carte d'empathie, HMW draft, guide d'interview |
 | Livrable 2 (S2) | `feature/livrable2` | 6 Chapeaux, VPC, HMW définitif, contraintes, hypothèses, métriques, backlog S3, script démo, pitch HMW, journal de prompts |
 | Livrable 3 (S3) | `feature/livrable3` | Agent Dify (L1), schéma d'architecture (L2), journal de prompts S3 (L3), réflexion éthique (L4) |
+| Livrable 4 (S4) | `feature/livrable4` | MVP Lovable (L1), README (L2), journal de prompts S4 (L3), captures + note d'itération (L4) |
 
 Convention :
 
@@ -204,7 +218,7 @@ GET409-Systeme-Pointage/
 ├── fiche-equipe.md         ← S1 · fiche d'équipe
 ├── carte-empathie.md       ← S1 · carte d'empathie
 ├── hmw.md                  ← S1 · HMW draft (5 formulations)
-├── journal-prompts.md      ← S1 + S2 + S3 · journal de prompts
+├── journal-prompts.md      ← S1 → S4 · journal de prompts
 ├── docs/
 │   ├── cadrage-defi.md         ← S1 · problèmes du secteur
 │   ├── guide-interview.md      ← S1 · guide + notes d'interview
@@ -221,14 +235,16 @@ GET409-Systeme-Pointage/
 │   ├── hmw-demo.md             ← S2 · script démo S6
 │   ├── pitch-hmw.md            ← S2 · pitch HMW 2 minutes
 │   ├── hmw-jury.md             ← S2 · préparation soutenance
-│   └── s3/
+│   ├── s3/
 │       ├── agent-dify.md           ← S3 · L1 agent + L2 architecture
 │       ├── prompts-agent.md        ← S3 · prompts exacts Chercheur / Rédacteur
 │       ├── jeu-de-test.md          ← S3 · données de test fictives
 │       └── reflexion-ethique.md    ← S3 · L4 réflexion éthique
-└── livrables/              ← PDF/PNG/DOCX (S1, S2, S3) + captures-s3/
+│   └── s4/
+│       └── mvp-lovable.md          ← S4 · MVP Lovable, checklist, captures, note d'itération (L4)
+└── livrables/              ← PDF/PNG/DOCX (S1 → S4) + captures-s3/ + captures-s4/
 ```
 
 ## Prochaines étapes
 
-- **S4** — Prototype MVP avec Bolt.new.
+- **S5** — MVP V2 : intégration MVP Lovable ↔ agent Dify (webhook) et base de connaissances RAG.
