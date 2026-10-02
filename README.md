@@ -3,7 +3,7 @@
 > Plateforme de gestion du pointage (présences, retards, heures supplémentaires) pour les entreprises au Sénégal.
 >
 > **MVP en ligne :** <https://exact-screen-match-154.lovable.app>
-> Module GET 409 — Atelier IA · Swiss UMEF University, Campus de Dakar · 2025-2026 · Séances 1-4 (Empathize → Define → Ideate → Agents IA → MVP)
+> Module GET 409 — Atelier IA · Swiss UMEF University, Campus de Dakar · 2025-2026 · Séances 1-5 (Empathize → Define → Ideate → Agents IA → MVP → RAG)
 
 ## Notre équipe
 
@@ -74,6 +74,17 @@ flowchart LR
 | **L4** — Réflexion éthique (10 pts) | 3 risques propres à l'agent + garde-fous techniques et organisationnels + recommandation (pilote contrôlé) | [docs/s3/reflexion-ethique.md](./docs/s3/reflexion-ethique.md) · [Word](./livrables/GET409-Systeme-Pointage_L4_Reflexion_Ethique_S3.docx) |
 
 Données de test (fictives) : [docs/s3/jeu-de-test.md](./docs/s3/jeu-de-test.md)
+
+## Séance 5 — MVP V2 : MVP Lovable ↔ agent Dify + RAG
+
+> Le MVP interroge l'agent Dify depuis la page **Pointages du jour** (« Demander à l'agent ») ; l'agent lit la base de connaissances `SystemePointage_KB_v1` (pointages S38-2026, données fictives) et renvoie un rapport d'anomalies.
+
+| Livrable | Contenu | Où |
+|---|---|---|
+| **L1** — MVP V2 intégré en ligne (30 pts) | Encadré « Rapport d'anomalies (agent IA) » + 3 tests de bout en bout (données, indirect, hors base) | <https://exact-screen-match-154.lovable.app/pointages> · [tests](./docs/s5/integration-rag.md#l1--tests-de-bout-en-bout-dans-le-mvp-02102026) |
+| **L2** — Pipeline RAG opérationnel (30 pts) | Base indexée (Disponible) + nœud Récupération de connaissances connecté au CHERCHEUR + test de récupération | [captures](./livrables/captures-s5/) · [workflow Dify](https://cloud.dify.ai/app/abf9189b-1500-4dd5-9e2f-e4c1dbe2123d/workflow) |
+| **L3** — Schéma d'architecture V2 (20 pts) | MVP Lovable → Webhook (fonction serveur) → API Dify → Agent → RAG → Base | [PNG](./livrables/GET409-Systeme-Pointage_L3_Architecture_V2_S5.png) · [détail](./docs/s5/integration-rag.md) |
+| **L4** — Journal de prompts S5 (20 pts) | P10 prompt RAG · P11 prompt webhook Lovable · P12 test de cohérence (itération anti-hallucination) | [journal-prompts.md](./journal-prompts.md#séance-5--journal-de-prompts-livrable-l4--rag--intégration-mvp--dify) · [PDF](./livrables/GET409-Systeme-Pointage_L4_Journal_Prompts_S5.pdf) |
 
 ## Séance 4 — MVP V1 avec Lovable.dev
 
@@ -202,6 +213,7 @@ Chaque livrable est préparé sur sa propre branche, puis fusionné dans `main` 
 | Livrable 2 (S2) | `feature/livrable2` | 6 Chapeaux, VPC, HMW définitif, contraintes, hypothèses, métriques, backlog S3, script démo, pitch HMW, journal de prompts |
 | Livrable 3 (S3) | `feature/livrable3` | Agent Dify (L1), schéma d'architecture (L2), journal de prompts S3 (L3), réflexion éthique (L4) |
 | Livrable 4 (S4) | `feature/livrable4` | MVP Lovable (L1), README (L2), journal de prompts S4 (L3), captures + note d'itération (L4) |
+| Livrable 5 (S5) | `feature/livrable5` | MVP V2 intégré (L1), pipeline RAG (L2), schéma V2 (L3), journal de prompts S5 (L4) |
 
 Convention :
 
@@ -218,7 +230,7 @@ GET409-Systeme-Pointage/
 ├── fiche-equipe.md         ← S1 · fiche d'équipe
 ├── carte-empathie.md       ← S1 · carte d'empathie
 ├── hmw.md                  ← S1 · HMW draft (5 formulations)
-├── journal-prompts.md      ← S1 → S4 · journal de prompts
+├── journal-prompts.md      ← S1 → S5 · journal de prompts
 ├── docs/
 │   ├── cadrage-defi.md         ← S1 · problèmes du secteur
 │   ├── guide-interview.md      ← S1 · guide + notes d'interview
@@ -240,11 +252,13 @@ GET409-Systeme-Pointage/
 │       ├── prompts-agent.md        ← S3 · prompts exacts Chercheur / Rédacteur
 │       ├── jeu-de-test.md          ← S3 · données de test fictives
 │       └── reflexion-ethique.md    ← S3 · L4 réflexion éthique
-│   └── s4/
-│       └── mvp-lovable.md          ← S4 · MVP Lovable, checklist, captures, note d'itération (L4)
-└── livrables/              ← PDF/PNG/DOCX (S1 → S4) + captures-s3/ + captures-s4/
+│   ├── s4/
+│   │   └── mvp-lovable.md          ← S4 · MVP Lovable, checklist, captures, note d'itération (L4)
+│   └── s5/
+│       └── integration-rag.md      ← S5 · intégration MVP ↔ Dify, RAG, schéma V2, tests
+└── livrables/              ← PDF/PNG/DOCX (S1 → S5) + captures-s3/ + captures-s4/ + captures-s5/
 ```
 
 ## Prochaines étapes
 
-- **S5** — MVP V2 : intégration MVP Lovable ↔ agent Dify (webhook) et base de connaissances RAG.
+- **S6** — Évaluation intermédiaire : démo 10 min (MVP V2 + agent RAG), note éthique d'une page, plan B (captures des tests).
