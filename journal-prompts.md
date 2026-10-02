@@ -546,3 +546,90 @@ rien d'autre.
 2. **1 prompt = 1 modification** + « Ne change rien d'autre » : 3 itérations sur 3 réussies du premier coup, sans régression.
 3. Lovable ne vérifie pas les faits (date erronée reprise telle quelle) : relire les données du prompt avant de l'envoyer.
 4. L'historique Lovable (**Revert**) nous a sauvés d'une erreur de manipulation : toujours vérifier l'URL publiée après chaque session.
+
+---
+
+# Séance 5 — Journal de Prompts (Livrable L4 · RAG + intégration MVP ↔ Dify)
+
+> Format du cours : prompt exact, résultat, analyse, note /5. Architecture et captures : [docs/s5/integration-rag.md](./docs/s5/integration-rag.md).
+
+| # | Type | Objectif | Résultat | Note |
+|---|---|---|---|---|
+| P10 | Prompt RAG (Knowledge) | Brancher la base `SystemePointage_KB_v1` sur le CHERCHEUR | ✅ anomalies tirées de la base | 4/5 |
+| P11 | Prompt webhook Lovable | Ajouter « Demander à l'agent » dans le MVP | ✅ 1ᵉʳ essai, rapport affiché | 5/5 |
+| P12 | Test de cohérence (3 questions) | Vérifier données / question indirecte / hors base | v1 ❌ (météo inventée) → v2 ✅ | 2/5 → 5/5 |
+
+## P10 — Prompt RAG : CHERCHEUR + base de connaissances
+
+**Configuration Dify :** base `SystemePointage_KB_v1` (fichier `GET409-Systeme-Pointage_Base_Pointages_S38.csv`, 50 pointages fictifs, 10 employés, 4 sites, semaine S38-2026), mode économique / index inversé, nœud *Récupération de connaissances* (requête = `Début · query`, Top K 20) entre DÉBUT et CHERCHEUR, contexte injecté avec `{{#context#}}`.
+
+**Ajout au prompt système du CHERCHEUR** (extrait) :
+```text
+SOURCE DE DONNÉES (une seule, jamais les deux mélangées) :
+- Si la demande de la RH contient des lignes de pointage collées : analyse UNIQUEMENT ces lignes
+  et ignore la base de connaissances.
+- Sinon : analyse les DONNÉES DE LA BASE DE CONNAISSANCES (en fin de message), une ligne par
+  pointage au format Matricule ; Site ; Date ; Arrivee ; Depart ; Lieu_pointage ; Statut ; Semaine ;
+  Source. Ne retiens que les lignes du site et de la période demandés.
+RÈGLES : utilise le Statut tel quel, ne le recalcule jamais ; chaque ligne non « Conforme » apparaît
+dans ANOMALIES (une par statut) et les TOTAUX correspondent à la liste.
+DONNÉES DE LA BASE DE CONNAISSANCES :
+{{#context#}}
+```
+
+**Test de récupération (onglet Dify) :** « EMP-004 Pikine Retard » → 3 lignes de EMP-004 (Pikine) ✅. « Absence Pikine » → lignes EMP-006 / EMP-004 ✅. « Statut Absence » ou « Heures sup » → 0 résultat.
+**Analyse — note 4/5 :** l'agent répond maintenant à partir de *nos* données (plus d'invention de pointages). Limite constatée : l'index inversé du plan gratuit ne cherche que par mots exacts du CSV ; d'où un Top K élevé (20) pour remonter toutes les lignes d'un site. Les embeddings (mode Haute qualité) demanderaient une clé payante. Nous avons aussi dû passer la méthode de recherche de la base en « mots-clés » : la recherche sémantique par défaut renvoyait une erreur (« Collection not found ») en mode économique.
+
+## P11 — Prompt webhook Lovable (template S5 adapté)
+
+```text
+Sur la page Pointages du jour, sous le tableau, ajoute un encadré « Rapport d'anomalies (agent IA) »
+dans le style actuel (fond blanc, bordure fine, couleur principale #0F766E) :
+1. Un champ texte avec le placeholder « Ex. : Anomalies Pikine semaine 38 »
+2. Un bouton « Demander à l'agent »
+3. Une zone de résultat sous le champ (fond gris clair, texte conservant les retours à la ligne)
+4. Un indicateur de chargement pendant la requête
+5. Un message d'erreur rouge si la requête échoue
+CONNEXION À L'AGENT DIFY :
+URL : https://api.dify.ai/v1/workflows/run · Méthode : POST
+Headers : Authorization: Bearer [CLÉ API — non publiée] · Content-Type: application/json
+Body JSON : { "inputs": { "query": texteDuChamp }, "response_mode": "blocking",
+              "user": "systeme-pointage-" + Date.now() }
+TRAITEMENT DE LA RÉPONSE :
+- Afficher data.data.outputs.text s'il existe (rapport), sinon data.data.outputs.message_erreur
+- Erreur réseau ou statut HTTP ≠ 200 : « Service temporairement indisponible »
+- Plus de 30 secondes : « La réponse prend trop de temps — réessayez »
+Ajoute sous l'encadré une petite mention grise : « Réponse générée par un agent IA à partir des
+pointages de la semaine 38 (données fictives). À vérifier par la RH avant toute décision. »
+Ne change rien d'autre.
+```
+
+**Choix par rapport au template du cours :** variable `query` dans `inputs` (notre workflow est de type *workflow*, pas *chat*) ; deux sorties possibles (`text` ou `message_erreur`) car notre agent a une branche SI/SINON ; délai porté à 30 s (deux modèles enchaînés, ~8 s mesurées en S3).
+**Résultat :** encadré ajouté ; Lovable a placé l'appel dans une **fonction serveur** (`/_serverFn/…`) : nous avons vérifié que la clé n'apparaît dans aucun des fichiers JavaScript envoyés au navigateur. Lovable a aussi corrigé 2 erreurs de build (dont une ancienne).
+**Analyse — note 5/5 :** fonctionnel au premier essai, états de chargement / erreur présents, et la clé reste côté serveur (mieux que le template, qui l'exposait dans le navigateur).
+
+## P12 — Test de cohérence de bout en bout (dans le MVP en ligne)
+
+| Test | Question saisie dans le MVP | Attendu | Obtenu |
+|---|---|---|---|
+| 1 · données | « Anomalies Pikine semaine 38 » | les 4 anomalies de Pikine de la base | ✅ EMP-004 retard 16/09 (31 min) · EMP-004 oubli de départ 17/09 · EMP-006 absence 18/09 · EMP-005 heures sup 14/09 (2 h 10) — identique au CSV |
+| 2 · indirecte | « Qui était absent à Pikine cette semaine ? » | EMP-006, 18/09 | ✅ absence EMP-006 le 18/09 (dans un rapport complet de Pikine) |
+| 3 · hors base (v1) | « Météo demain à Dakar ? » | « INSUFFISANT » | ❌ le CHERCHEUR a **inventé une météo** (« 27 °C, averses… »), puis le REDACTEUR a produit un rapport vide « Non disponible » |
+| 3 · hors base (v2) | idem | « INSUFFISANT » | ✅ « INSUFFISANT : demande hors du périmètre des pointages » |
+
+**Itération (v2), ajoutée en tête du prompt système du CHERCHEUR :**
+```text
+PÉRIMÈTRE (à vérifier en premier) : tu ne traites QUE les questions sur les pointages et les
+présences des employés (retards, absences, oublis de départ, heures sup, hors zone, missions).
+Si la demande porte sur autre chose (météo, actualité, culture générale, conseil juridique…), ne
+réponds JAMAIS à la question : réponds uniquement « INSUFFISANT : demande hors du périmètre des
+pointages ».
+```
+**Analyse — note v1 2/5 → v2 5/5 :** le RAG seul ne suffit pas à empêcher l'hallucination : quand la base ne renvoie rien (`result: []`), le modèle répond avec ses connaissances générales. Il faut une règle de périmètre **explicite** dans le prompt, et un test hors base systématique. Point restant (test 2) : l'agent produit toujours un rapport complet du site au lieu de répondre seulement à la question ; acceptable pour la RH, à affiner en S6.
+
+## Leçons retenues (S5)
+
+1. **Tester hors base est indispensable** : c'est ce test qui a révélé l'hallucination « météo », invisible avec des questions normales.
+2. Le mode économique de Dify (index inversé) cherche par mots exacts : formuler les questions avec les mots du CSV (site, matricule) ou augmenter le Top K.
+3. Une clé API ne doit pas être dans le code du navigateur : la fonction serveur de Lovable la garde côté serveur. La clé reste à supprimer après l'évaluation S6.
+4. Le contrat d'interface `INSUFFISANT` (S3) sert encore : il permet au MVP d'afficher un message clair au lieu d'un faux rapport.
